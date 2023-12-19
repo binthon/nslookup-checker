@@ -36,7 +36,7 @@ def process_urls():
         checkSystem(url)
         urls_queue.task_done()
 
-# Start processing thread
+
 threading.Thread(target=process_urls, daemon=True).start()
 
 try:
@@ -52,4 +52,4 @@ try:
 except WebDriverException:
     driver.quit()
 finally:
-    urls_queue.put(None)  # Signal the processing thread to exit.
+    urls_queue.put(None)  
