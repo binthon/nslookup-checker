@@ -6,7 +6,7 @@ if not exist %domains_file% goto :error
 
 for /f "tokens=*" %%a in (%domains_file%) do (
     set domain=%%a
-    echo Tracert dla !domain! na dzien %date% %time% >> tracert_results
+    echo Tracert dla !domain! na dzien %date% %time% >> tracert_results.txt
     tracert !domain! >> tracert_results.txt
 )
 
