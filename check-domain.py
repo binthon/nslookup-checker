@@ -1,5 +1,8 @@
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
 import time
 import re
 import subprocess
@@ -11,14 +14,29 @@ def extract_base_url(url):
     match = re.match(r'([^/]+)', cleaned_url)
     return match.group(1) if match else None
 
-driver = webdriver.Firefox()
-driver.get("https://google.com")
+system_name = platform.system().lower()
+if system_name == "windows":
+    driver = webdriver.Firefox()
+    driver.get("https://google.com")
+    output_file = "domains.txt"
+elif system_name in ["linux", "darwin"]:
+    opts = Options()
+    opts.binary_location = '/usr/local/bin/firefox'
+    service = Service(executable_path=GeckoDriverManager().install())
+    driver = webdriver.Firefox(service=service, options=opts)
+    driver.get("https://google.com")
+    output_file = "domains.txt"
+   
+if not os.path.exists(output_file):
+    with open(output_file, "w") as file:
+        pass
+os.chmod(output_file, 0o744)
 
 visited_base_urls = set()
-output_file = "domains.txt"
+ 
 
 try:
-    with open(output_file, "w") as file:
+    with open(output_file, "w") as file: 
         while True:
             current_url = driver.current_url
             current_base_url = extract_base_url(current_url)
@@ -32,9 +50,7 @@ except WebDriverException:
     pass
 finally:
     driver.quit()
-    system_name = platform.system().lower()
     if system_name == "windows":
         subprocess.run("urlInfo.bat", check=True)
     elif system_name in ["linux", "darwin"]:
-        os.chmod("./urlInfo.sh", 0o755) 
         subprocess.run("./urlInfo.sh", shell=True, check=True)
