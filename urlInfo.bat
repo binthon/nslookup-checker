@@ -1,21 +1,21 @@
 @echo off
 setlocal enabledelayedexpansion
 
-if "%~1"=="" goto :error
-set address=%1
+set domains_file=domains.txt
+if not exist %domains_file% goto :error
 
-echo Tracert dla %address% na dzien %date% %time% >> tracert_results.txt
-for /f "delims=" %%a in ('tracert %address%') do (
-    echo %%a >> tracert_results.txt
-    echo %%a
-    echo %%a | find "Request timed out" > nul
-    if not errorlevel 1 goto :end
+for /f "tokens=*" %%a in (%domains_file%) do (
+    set domain=%%a
+    echo Tracert dla !domain! na dzien %date% %time% >> tracert_results
+    tracert !domain! >> tracert_results.txt
 )
 
-:end
-echo Zakonczono tracert dla %address%
-exit /b
+goto :end
 
 :error
-echo Nie podano adresu URL.
+echo Nie znaleziono pliku z domenami.
+exit /b
+
+:end
+echo Zakonczono przetwarzanie domen.
 exit /b
