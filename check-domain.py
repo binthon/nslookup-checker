@@ -9,6 +9,7 @@ import subprocess
 import platform
 import os
 
+
 def extract_base_url(url):
     cleaned_url = re.sub(r'https?://', '', url)
     match = re.match(r'([^/]+)', cleaned_url)
@@ -51,6 +52,6 @@ except WebDriverException:
 finally:
     driver.quit()
     if system_name == "windows":
-        subprocess.run("urlInfo.bat", check=True)
+        subprocess.run("urlInfo-test.bat", check=False)
     elif system_name in ["linux", "darwin"]:
         subprocess.run("./urlInfo.sh", shell=True, check=True)
