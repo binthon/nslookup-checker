@@ -1,6 +1,7 @@
 import json
 import subprocess
 import datetime
+import os
 
 def load_from_json(filename):
     with open(filename, 'r') as file:
@@ -33,12 +34,18 @@ def tracertResult():
     results_file = "tracert_result.txt"
     data = load_from_json(json_file)
     domains = data.get('domains', [])
-    last_url = data.get('last_url', None)
 
-    start_processing = False if last_url else True
+    file_exists = os.path.exists(results_file)
+
+    if not file_exists or data.get('last_url') not in domains:
+        data['last_url'] = domains[0] if domains else None
+        save_to_json(json_file, data)
+
+    last_url = data.get('last_url')
+    start_processing = False if file_exists else True
 
     for domain in domains:
-        if domain == last_url:
+        if domain == last_url and file_exists:
             start_processing = True
             continue
 
@@ -49,3 +56,4 @@ def tracertResult():
 
 if __name__ == "__main__":
     tracertResult()
+
