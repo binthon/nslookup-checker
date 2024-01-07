@@ -53,6 +53,7 @@ def checker():
     json_file = "domains.json"
     data = load_from_json(json_file)
     visited_domains = data['domains']
+    last_visited_domain = None
 
     driver = setup_driver()
     try:
@@ -60,34 +61,37 @@ def checker():
             current_url = driver.current_url
             current_base_domain = extract_base_url(current_url)
 
-            if current_base_domain and current_base_domain not in visited_domains and current_base_domain != "about:blank":
+            if current_base_domain and current_base_domain != "about:blank" and current_base_domain != last_visited_domain:
                 visited_domains.append(current_base_domain)
                 data['domains'] = visited_domains
                 save_to_json(json_file, data)
+                last_visited_domain = current_base_domain
     except WebDriverException:
         pass
     finally:
         driver.quit()
+
+
 
 if __name__ == "__main__":
     while True: 
         choice = input("Do you want to directly run app? (YES/NO): ").strip().lower()
         if choice == 'yes':
             if os.path.exists('domains.json'):
-                print("Tracert for domain")
-                subprocess.run(["python", "comparator.py"])
+                print("Tracert for domain the rest from domains.json")
+                subprocess.run(["python", "urlInfo.py"])
                 break
             else:
-                print("Database doesn't exist. First, web scraping will be done.")
+                print("Json file doesn't exist. First, web scraping will be done form collect domains.")
                 checker()   
-                print("Tracert for domain")
-                subprocess.run(["python", "comparator.py"])
+                print("Now tracert for domain")
+                subprocess.run(["python", "urlInfo.py"])
                 break  
         elif choice == 'no':
-            print("First, web scraping will be done.")
+            print("First, web scraping will be done for new domains.")
             checker()
-            print("Tracert for domain")
-            subprocess.run(["python", "comparator.py"])
+            print("Now tracert for domain")
+            subprocess.run(["python", "urlInfo.py"])
             break  
         else:
             print("Type 'yes' or 'no'.")
