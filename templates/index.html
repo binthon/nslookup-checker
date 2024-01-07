@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Domen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Lista Domen</h1>
+    {% for domain in domains %}
+    <div class="dropdown">
+        <button onclick="showTracert('{{ domain }}')">{{ domain }}</button>
+        <div id="tracert-data-{{ domain }}" style="display: none;">
+            {% for tracert in tracert_results[domain] %}
+            <pre>{{ tracert }}</pre>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div id="tracert-container" style="display: none;">
+        <div id="tracert-content"></div> 
+        <button onclick="closeTracert()">Zamknij</button>
+    </div>
+    <script>
+       function showTracert(domain) {
+                var dataId = 'tracert-data-' + domain;
+                var tracertDataElement = document.getElementById(dataId);
+            if (tracertDataElement) {
+                document.getElementById('tracert-content').innerHTML = tracertDataElement.innerHTML;
+                document.getElementById('tracert-container').style.display = 'block';
+            } else {
+                console.error('Element not found:', dataId);
+            }
+        }
+        function closeTracert() {
+            document.getElementById('tracert-container').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
