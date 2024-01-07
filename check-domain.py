@@ -78,13 +78,13 @@ if __name__ == "__main__":
                 subprocess.run(["python", "comparator.py"])
                 break
             else:
-                print("First, web scraping will be done.")
+                print("Database doesn't exist. First, web scraping will be done.")
                 checker()   
                 print("Tracert for domain")
                 subprocess.run(["python", "comparator.py"])
                 break  
         elif choice == 'no':
-            print("Database doesn't exist. First, web scraping will be done.")
+            print("First, web scraping will be done.")
             checker()
             print("Tracert for domain")
             subprocess.run(["python", "comparator.py"])
