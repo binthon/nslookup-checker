@@ -9,7 +9,7 @@
     <h1>Lista Domen</h1>
     {% for domain in domains %}
     <div class="dropdown">
-        <button onclick="toggleDropdown('{{ domain }}')">{{ domain }}</button>
+        <button>{{ domain }}</button>
         <div class="dropdown-content" id="dropdown-content-{{ domain }}">
             <button onclick="nslookupFunction('{{ domain }}')">nslookup</button>
             <button onclick="showTracert('{{ domain }}')">tracert</button>
@@ -27,6 +27,10 @@
         <div id="tracert-content"></div> 
         <button onclick="closeTracert()">Zamknij</button>
     </div>
+    <div id="nslookup-container" style="display: none;">
+        <div id="nslookup-content"></div>
+        <button onclick="closeNslookup()">Zamknij</button>
+    </div>
     <script>
        function showTracert(domain) {
                 var dataId = 'tracert-data-' + domain;
@@ -43,19 +47,38 @@
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('.dropdown').forEach(dropdown => {
-        let button = dropdown.querySelector('button');
-        let dropdownContent = dropdown.querySelector('.dropdown-content');
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+            let button = dropdown.querySelector('button');
+            let dropdownContent = dropdown.querySelector('.dropdown-content');
 
-        button.addEventListener('mouseenter', (event) => {
-            dropdownContent.style.display = 'block';
+                button.addEventListener('mouseenter', (event) => {
+                    dropdownContent.style.display = 'block';
+                });
+
+                dropdown.addEventListener('mouseleave', (event) => {
+                    dropdownContent.style.display = 'none';
+                });
+            });
         });
 
-        dropdown.addEventListener('mouseleave', (event) => {
-            dropdownContent.style.display = 'none';
-        });
-    });
-});
+        function nslookupFunction(domain) {
+            var ips = data['IP'][domain];
+            if (ips) {
+                var content = '<h3>Adresy IP dla ' + domain + '</h3>';
+                content += '<ul>';
+                ips.forEach(function(ip) {
+                    content += '<li>' + ip + '</li>';
+                });
+                content += '</ul>';
+                document.getElementById('nslookup-content').innerHTML = content;
+                document.getElementById('nslookup-container').style.display = 'block';
+            } else {
+                console.error('Brak adresów IP dla domeny:', domain);
+            }
+        }
+        function closeNslookup() {
+            document.getElementById('nslookup-container').style.display = 'none';
+        }
 
 
     </script>
