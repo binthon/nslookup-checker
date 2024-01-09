@@ -24,37 +24,43 @@ def run_tracert(domain, results_file):
             if "Request timed out" in line:
                 timeout_count += 1
                 if timeout_count >= max_consecutive_timeouts:
-                    file.write("More than 3 'Request timed out' line, does tracert for next domain.\n")
+                    file.write("More than 3 'Request timed out' lines, moving to next domain.\n")
                     file.write("Trace complete.\n")
                     break
             else:
                 timeout_count = 0
 
-def tracertResult(force_tracert=False):
+def tracert_domains():
     json_file = "domains.json"
     results_file = "tracert_result.txt"
     data = load_from_json(json_file)
-    domains = data.get('domains', [])
-    last_url = data.get('last_url')
+
+    last_url_info = data.get('last_url', {"domain": None, "occurrence": None})
+    last_domain = last_url_info.get("domain")
+    last_occurrence = last_url_info.get("occurrence")
+    order = data.get('order', [])
+    start_processing = False
+
+    if not os.path.exists(results_file) or os.path.getsize(results_file) == 0:
+        start_processing = True
 
 
-    if last_url == domains[-1] and not force_tracert and os.path.exists(results_file):
-        if os.path.getsize(results_file) != 0:
-            return
+    domain_counter = {}
 
-    file_exists = os.path.exists(results_file)
-    file_is_empty = not file_exists or os.path.getsize(results_file) == 0
-    start_processing = True if file_is_empty or last_url not in domains else False
+    for domain in order:
+        domain_counter[domain] = domain_counter.get(domain, 0) + 1
 
-    for domain in domains:
-        if not start_processing and domain == last_url:
-            start_processing = True
-            continue
+        if not start_processing:
+            if domain == last_domain and domain_counter[domain] == last_occurrence:
+                start_processing = True
+                continue
 
         if start_processing:
             run_tracert(domain, results_file)
-            data['last_url'] = domain
+            data['last_url'] = {"domain": domain, "occurrence": domain_counter[domain]}
             save_to_json(json_file, data)
+
+
 if __name__ == "__main__":
-    tracertResult()
+    tracert_domains()
     subprocess.run(["python", "comparator.py"])

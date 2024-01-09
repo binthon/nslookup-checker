@@ -11,7 +11,7 @@ body {
 }
 
 .dropdown button {
-    width: 200px;
+    width: 150px;
     text-align: left;
     background-color: #007bff;
     color: white;
@@ -21,6 +21,7 @@ body {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
+    height: 40px;
 }
 
 .dropdown button:hover {
@@ -31,29 +32,62 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    left: 100%;
+    left: 150px;
     top: 0;
     z-index: 1;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown-content button {
     display: block;
+    padding: 0;
+    margin-bottom: 2px;
+    background-color: #f1f1f1;
+    color: black;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 20px;
 }
+
+.dropdown-content button:hover {
+    background-color: #ddd;
+}
+
 #tracert-container {
-    position: fixed; /* Stała pozycja */
-    top: 50%; /* Połowa wysokości ekranu */
-    left: 35%; /* Połowa szerokości ekranu */
-    transform: translate(-50%, -50%); /* Przesunięcie do środka */
-    background-color: white; /* Tło */
-    padding: 20px; /* Odstępy wewnątrz */
-    border: 1px solid #ddd; /* Obramowanie */
-    z-index: 1000; /* Wyższa warstwa */
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5); /* Cień */
-    max-width: 80%; /* Maksymalna szerokość */
-    max-height: 80%; /* Maksymalna wysokość */
-    overflow: auto; /* Przewijanie w razie potrzeby */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+    max-width: 80%;
+    max-height: 80%;
+    overflow: auto;
 }
 
 #tracert-content {
-    margin-bottom: 20px; /* Odstęp od dolnego przycisku */
+    margin-bottom: 20px;
+}
+
+#tracert-container button {
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px; 
+    transition-duration: 0.4s; 
+}
+
+#tracert-container button:hover {
+    background-color: #15e01f; 
 }

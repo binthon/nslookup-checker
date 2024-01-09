@@ -9,7 +9,11 @@
     <h1>Lista Domen</h1>
     {% for domain in domains %}
     <div class="dropdown">
-        <button onclick="showTracert('{{ domain }}')">{{ domain }}</button>
+        <button onclick="toggleDropdown('{{ domain }}')">{{ domain }}</button>
+        <div class="dropdown-content" id="dropdown-content-{{ domain }}">
+            <button onclick="nslookupFunction('{{ domain }}')">nslookup</button>
+            <button onclick="showTracert('{{ domain }}')">tracert</button>
+        </div>
         <div id="tracert-data-{{ domain }}" style="display: none;">
             {% for tracert in tracert_results[domain] %}
             <pre>{{ tracert }}</pre>
@@ -17,6 +21,7 @@
         </div>
     </div>
     {% endfor %}
+    
 
     <div id="tracert-container" style="display: none;">
         <div id="tracert-content"></div> 
@@ -36,6 +41,23 @@
         function closeTracert() {
             document.getElementById('tracert-container').style.display = 'none';
         }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        let button = dropdown.querySelector('button');
+        let dropdownContent = dropdown.querySelector('.dropdown-content');
+
+        button.addEventListener('mouseenter', (event) => {
+            dropdownContent.style.display = 'block';
+        });
+
+        dropdown.addEventListener('mouseleave', (event) => {
+            dropdownContent.style.display = 'none';
+        });
+    });
+});
+
+
     </script>
 </body>
 </html>
