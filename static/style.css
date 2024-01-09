@@ -91,3 +91,42 @@ body {
 #tracert-container button:hover {
     background-color: #15e01f; 
 }
+
+
+#nslookup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+    max-width: 80%;
+    max-height: 80%;
+    overflow: auto;
+}
+
+#nslookup-content {
+    margin-bottom: 20px;
+}
+
+#nslookup-container button {
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px; 
+    transition-duration: 0.4s; 
+}
+
+#nslookup-containerbutton:hover {
+    background-color: #15e01f; 
+}
