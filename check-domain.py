@@ -37,8 +37,9 @@ def save_to_json(filename, data):
 def create_empty_json_if_not_exists(filename):
     if not os.path.exists(filename):
         data = {
-            "last_url": "",
-            "domains": []
+            "last_url": {"domain": None, "occurrence": 0},
+            "domains": {},
+            "order": []
         }
         with open(filename, "w") as file:
             json.dump(data, file, indent=4)
@@ -46,43 +47,62 @@ def create_empty_json_if_not_exists(filename):
 
 def load_from_json(filename):
     create_empty_json_if_not_exists(filename)
+
     with open(filename, 'r') as file:
-        return json.load(file)
+        if os.path.getsize(filename) == 0:
+            return {
+                "last_url": {"domain": None, "occurrence": 0},
+                "domains": {},
+                "order": []
+            }
+        else:
+            return json.load(file)
+
 
 def checker():
     json_file = "domains.json"
     data = load_from_json(json_file)
-    visited_domains = data['domains']
+    visited_domains = data.get('domains', {})
+    order = data.get('order', [])
+    
+    driver = setup_driver()
     last_visited_domain = None
 
-    driver = setup_driver()
     try:
         while True:
             current_url = driver.current_url
             current_base_domain = extract_base_url(current_url)
 
-            if current_base_domain and current_base_domain != "about:blank" and current_base_domain != last_visited_domain:
-                visited_domains.append(current_base_domain)
+            if current_base_domain and current_base_domain != "about:blank":
+                if current_base_domain != last_visited_domain:
+                    if order.count(current_base_domain) < 3:
+                        order.append(current_base_domain)
+                    occurrences = visited_domains.get(current_base_domain, [])
+                    if len(occurrences) < 3:
+                        occurrences.append(len(occurrences) + 1)
+                        visited_domains[current_base_domain] = occurrences
+
+                    last_visited_domain = current_base_domain
+
                 data['domains'] = visited_domains
+                data['order'] = order
                 save_to_json(json_file, data)
-                last_visited_domain = current_base_domain
+
     except WebDriverException:
         pass
     finally:
         driver.quit()
 
-
-
 if __name__ == "__main__":
     while True: 
         choice = input("Do you want to directly run app? (YES/NO): ").strip().lower()
         if choice == 'yes':
-            if os.path.exists('domains.json'):
+            if os.path.exists('domains.json') and not os.path.getsize('domains.json') == 0:
                 print("Tracert for domain the rest from domains.json")
                 subprocess.run(["python", "urlInfo.py"])
                 break
             else:
-                print("Json file doesn't exist. First, web scraping will be done form collect domains.")
+                print("Json file doesn't exist or is empty. First, web scraping will be done form collect domains.")
                 checker()   
                 print("Now tracert for domain")
                 subprocess.run(["python", "urlInfo.py"])
