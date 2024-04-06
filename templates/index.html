@@ -19,6 +19,12 @@
             <pre>{{ tracert }}</pre>
             {% endfor %}
         </div>
+        <div id="nslookup-data-{{ domain.replace('.', '-') }}" style="display: none;">
+            {% for ip in data['IP'][domain] %}
+            <p>{{ ip }}</p>
+            {% endfor %}
+        </div>
+
     </div>
     {% endfor %}
     
@@ -33,8 +39,9 @@
     </div>
     <script>
        function showTracert(domain) {
-                var dataId = 'tracert-data-' + domain;
-                var tracertDataElement = document.getElementById(dataId);
+            closeNslookup();
+            var dataId = 'tracert-data-' + domain;
+            var tracertDataElement = document.getElementById(dataId);
             if (tracertDataElement) {
                 document.getElementById('tracert-content').innerHTML = tracertDataElement.innerHTML;
                 document.getElementById('tracert-container').style.display = 'block';
@@ -46,6 +53,30 @@
             document.getElementById('tracert-container').style.display = 'none';
         }
 
+
+        function closeNslookup() {
+            document.getElementById('nslookup-container').style.display = 'none';
+        }
+
+        function nslookupFunction(domain) {
+            closeTracert();
+            var domainId = domain.replace(/\./g, '-'); 
+            var dataId = 'nslookup-data-' + domainId;
+            var nslookupDataElement = document.getElementById(dataId);
+            
+            if (nslookupDataElement) {
+                var content = '<h3>Adresy IP dla ' + domain + '</h3>';
+                content += '<ol>';
+                var ipElements = nslookupDataElement.querySelectorAll('p');
+                for (var i = 0; i < ipElements.length; i++) {
+                    content += '<li>' + ipElements[i].textContent + '</li>';
+                }
+                content += '</ol>';
+                document.getElementById('nslookup-content').innerHTML = content;
+                document.getElementById('nslookup-container').style.display = 'block';
+                console.error('Element not found:', dataId);
+            }
+        }   
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('.dropdown').forEach(dropdown => {
             let button = dropdown.querySelector('button');
@@ -60,27 +91,6 @@
                 });
             });
         });
-
-        function nslookupFunction(domain) {
-            var ips = data['IP'][domain];
-            if (ips) {
-                var content = '<h3>Adresy IP dla ' + domain + '</h3>';
-                content += '<ul>';
-                ips.forEach(function(ip) {
-                    content += '<li>' + ip + '</li>';
-                });
-                content += '</ul>';
-                document.getElementById('nslookup-content').innerHTML = content;
-                document.getElementById('nslookup-container').style.display = 'block';
-            } else {
-                console.error('Brak adresów IP dla domeny:', domain);
-            }
-        }
-        function closeNslookup() {
-            document.getElementById('nslookup-container').style.display = 'none';
-        }
-
-
     </script>
 </body>
 </html>
