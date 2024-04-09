@@ -6,9 +6,17 @@ import re
 app = Flask(__name__)
 
 def extract_ips_from_tracert(tracert_text):
-    ip_pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
-    ips = re.findall(ip_pattern, tracert_text)
-    return ips
+    pattern = r'(\b[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,})\b) \[(\d{1,3}(?:\.\d{1,3}){3})\]|\b(\d{1,3}(?:\.\d{1,3}){3})\b'
+    matches = re.findall(pattern, tracert_text)
+    results = []
+    for match in matches:
+        domain, ip, ip_without_domain = match
+        if domain:
+            entry = f"{ip} [{domain}]"
+        else:
+            entry = ip_without_domain
+        results.append(entry)
+    return results
 
 def add_ip_to_domains(tracert_results):
     ips_by_domain = {}
@@ -16,12 +24,11 @@ def add_ip_to_domains(tracert_results):
         ordered_ips = []
         for tracert_text in tracert_texts:
             ips = extract_ips_from_tracert(tracert_text)
-            for ip in ips[3:]:
+            for ip in ips[6:]:  
                 if ip not in ordered_ips:
                     ordered_ips.append(ip)
         ips_by_domain[domain] = ordered_ips
     return ips_by_domain
-
 
 def load_tracert_results(filename):
     with open(filename, 'r') as file:
