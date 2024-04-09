@@ -66,17 +66,20 @@
             
             if (nslookupDataElement) {
                 var content = '<h3>Adresy IP dla ' + domain + '</h3>';
-                content += '<ol>';
+                content += '<ul>';
                 var ipElements = nslookupDataElement.querySelectorAll('p');
                 for (var i = 0; i < ipElements.length; i++) {
-                    content += '<li>' + ipElements[i].textContent + '</li>';
+                    var ip = ipElements[i].textContent;
+                    var radioId = 'ipRadio-' + domainId + '-' + i;
+                    content += '<li>' + ip + ' <input type="radio" name="ipRadio" id="' + radioId + '" value="' + ip + '"/></li>';
                 }
-                content += '</ol>';
+                content += '</ul>';
                 document.getElementById('nslookup-content').innerHTML = content;
                 document.getElementById('nslookup-container').style.display = 'block';
+            } else {
                 console.error('Element not found:', dataId);
             }
-        }   
+        }
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('.dropdown').forEach(dropdown => {
             let button = dropdown.querySelector('button');
