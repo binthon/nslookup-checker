@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, request, render_template, jsonify
+import subprocess
 import json
 import os
 import re
@@ -24,7 +25,7 @@ def add_ip_to_domains(tracert_results):
         ordered_ips = []
         for tracert_text in tracert_texts:
             ips = extract_ips_from_tracert(tracert_text)
-            for ip in ips[6:]:  
+            for ip in ips[6:]:
                 if ip not in ordered_ips:
                     ordered_ips.append(ip)
         ips_by_domain[domain] = ordered_ips
@@ -74,6 +75,43 @@ def show_domains():
 
     return render_template('index.html', domains=unique_domains, tracert_results=tracert_results, data=data)
 
+@app.route('/execute_nslookup', methods=['POST'])
+def execute_nslookup():
+    data = request.get_json()
+    ip = data.get('ip')
+
+    # Załaduj istniejący plik domains.json
+    with open('domains.json', 'r') as file:
+        existing_data = json.load(file)
+
+    # Sprawdź, czy wynik nslookup dla tego IP już istnieje
+    for entry in existing_data.get('nslookup', []):
+        if entry['IP'] == ip:
+            return jsonify(entry)
+
+    # Uruchomienie skryptu Batch z przekazanym adresem IP
+    command = f'nslookupchecker.bat {ip}'
+
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+
+    result = {
+        "IP": ip,
+        "content": stdout.decode('utf-8').splitlines() if process.returncode == 0 else [],
+        "error": stderr.decode('utf-8') if process.returncode != 0 else None
+    }
+
+    # Dodaj wynik nslookup do odpowiedniego miejsca w JSON
+    if 'nslookup' not in existing_data:
+        existing_data['nslookup'] = []
+
+    existing_data['nslookup'].append(result)
+
+    # Zapisz zaktualizowany plik domains.json
+    with open('domains.json', 'w') as file:
+        json.dump(existing_data, file, indent=4)
+
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)
-    

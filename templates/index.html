@@ -6,40 +6,50 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Lista Domen</h1>
-    {% for domain in domains %}
-    <div class="dropdown">
-        <button>{{ domain }}</button>
-        <div class="dropdown-content" id="dropdown-content-{{ domain }}">
-            <button onclick="nslookupFunction('{{ domain }}')">nslookup</button>
-            <button onclick="showTracert('{{ domain }}')">tracert</button>
-        </div>
-        <div id="tracert-data-{{ domain }}" style="display: none;">
-            {% for tracert in tracert_results[domain] %}
-            <pre>{{ tracert }}</pre>
-            {% endfor %}
-        </div>
-        <div id="nslookup-data-{{ domain.replace('.', '-') }}" style="display: none;">
-            {% for ip in data['IP'][domain] %}
-            <p>{{ ip }}</p>
+    <div class="container">
+        <div class="domains-container">
+            <h1>Lista Domen</h1>
+            {% for domain in domains %}
+            <div class="dropdown">
+                <button>{{ domain }}</button>
+                <div class="dropdown-content" id="dropdown-content-{{ domain }}">
+                    <button onclick="nslookupFunction('{{ domain }}')">nslookup</button>
+                    <button onclick="showTracert('{{ domain }}')">tracert</button>
+                </div>
+                <div id="tracert-data-{{ domain }}" style="display: none;">
+                    {% for tracert in tracert_results[domain] %}
+                    <pre>{{ tracert }}</pre>
+                    {% endfor %}
+                </div>
+                <div id="nslookup-data-{{ domain.replace('.', '-') }}" style="display: none;">
+                    {% for ip in data['IP'][domain] %}
+                    <p>{{ ip }}</p>
+                    {% endfor %}
+                </div>
+            </div>
             {% endfor %}
         </div>
 
+        <div class="result-container" id="selection-container" style="display: none;">
+            <div id="selection-content"></div>
+            <button class="close-button" onclick="closeSelectionAndNslookup()">Zamknij</button>
+        </div>
+        
+        <div class="result-container" id="nslookup-container" style="display: none;">
+            <div id="nslookup-content"></div>
+            <button class="close-button" onclick="closeNslookup()">Zamknij</button>
+        </div>
     </div>
-    {% endfor %}
-    
 
-    <div id="tracert-container" style="display: none;">
-        <div id="tracert-content"></div> 
-        <button onclick="closeTracert()">Zamknij</button>
+    <div id="tracert-container" class="result-container" style="display: none;">
+        <div id="tracert-content"></div>
+        <button class="close-button" onclick="closeTracert()">Zamknij</button>
     </div>
-    <div id="nslookup-container" style="display: none;">
-        <div id="nslookup-content"></div>
-        <button onclick="closeNslookup()">Zamknij</button>
-    </div>
+
     <script>
-       function showTracert(domain) {
+        function showTracert(domain) {
             closeNslookup();
+            closeSelection();
             var dataId = 'tracert-data-' + domain;
             var tracertDataElement = document.getElementById(dataId);
             if (tracertDataElement) {
@@ -49,17 +59,27 @@
                 console.error('Element not found:', dataId);
             }
         }
+
         function closeTracert() {
             document.getElementById('tracert-container').style.display = 'none';
         }
-
 
         function closeNslookup() {
             document.getElementById('nslookup-container').style.display = 'none';
         }
 
+        function closeSelection() {
+            document.getElementById('selection-container').style.display = 'none';
+        }
+
+        function closeSelectionAndNslookup() {
+            closeSelection();
+            closeNslookup();
+        }
+
         function nslookupFunction(domain) {
             closeTracert();
+            closeNslookup();
             var domainId = domain.replace(/\./g, '-'); 
             var dataId = 'nslookup-data-' + domainId;
             var nslookupDataElement = document.getElementById(dataId);
@@ -71,15 +91,42 @@
                 for (var i = 0; i < ipElements.length; i++) {
                     var ip = ipElements[i].textContent;
                     var radioId = 'ipRadio-' + domainId + '-' + i;
-                    content += '<li>' + ip + ' <input type="radio" name="ipRadio" id="' + radioId + '" value="' + ip + '"/></li>';
+                    content += '<li>' + ip + ' <input type="radio" name="ipRadio" id="' + radioId + '" value="' + ip + '" onclick="executeNslookup(\'' + ip + '\')"/></li>';
                 }
                 content += '</ul>';
-                document.getElementById('nslookup-content').innerHTML = content;
-                document.getElementById('nslookup-container').style.display = 'block';
+                document.getElementById('selection-content').innerHTML = content;
+                document.getElementById('selection-container').style.display = 'block';
             } else {
                 console.error('Element not found:', dataId);
             }
         }
+
+        function executeNslookup(ip) {
+            fetch('/execute_nslookup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ip: ip }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var content = '<h3>Wynik nslookup</h3>';
+                if (data.content && data.content.length > 0) {
+                    content += '<pre>' + data.content.join('\n') + '</pre>';
+                } else if (data.error) {
+                    content += '<p>' + data.error + '</p>';
+                } else {
+                    content += '<p>No results found.</p>';
+                }
+                document.getElementById('nslookup-content').innerHTML = content;
+                document.getElementById('nslookup-container').style.display = 'block';
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('.dropdown').forEach(dropdown => {
             let button = dropdown.querySelector('button');
