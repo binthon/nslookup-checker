@@ -85,7 +85,9 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    max-width: 300px;
+    max-width: 600px; /* Zwiększona maksymalna szerokość */
+    width: 100%; /* Dodana szerokość 100% */
+    margin: auto; /* Wyśrodkowanie horyzontalne */
 }
 
 .result-content {
