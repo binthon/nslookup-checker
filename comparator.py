@@ -78,36 +78,37 @@ def show_domains():
 @app.route('/execute_nslookup', methods=['POST'])
 def execute_nslookup():
     data = request.get_json()
-    ip = data.get('ip')
+    ip_with_domain = data.get('ip')
+    ip = ip_with_domain.split(' ')[0]
+    domain = re.search(r'\[(.*?)\]', ip_with_domain)
+    
+    parameter = domain.group(1) if domain else ip
 
-    # Załaduj istniejący plik domains.json
+    print(f"Parameter passed to nslookupchecker.bat: {parameter}")
+
     with open('domains.json', 'r') as file:
         existing_data = json.load(file)
 
-    # Sprawdź, czy wynik nslookup dla tego IP już istnieje
     for entry in existing_data.get('nslookup', []):
-        if entry['IP'] == ip:
+        if entry['IP'] == parameter:
             return jsonify(entry)
 
-    # Uruchomienie skryptu Batch z przekazanym adresem IP
-    command = f'nslookupchecker.bat {ip}'
+    command = f'nslookupchecker.bat {parameter}'
 
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
     result = {
-        "IP": ip,
+        "IP": parameter,
         "content": stdout.decode('utf-8').splitlines() if process.returncode == 0 else [],
         "error": stderr.decode('utf-8') if process.returncode != 0 else None
     }
 
-    # Dodaj wynik nslookup do odpowiedniego miejsca w JSON
     if 'nslookup' not in existing_data:
         existing_data['nslookup'] = []
 
     existing_data['nslookup'].append(result)
 
-    # Zapisz zaktualizowany plik domains.json
     with open('domains.json', 'w') as file:
         json.dump(existing_data, file, indent=4)
 
