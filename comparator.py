@@ -25,7 +25,7 @@ def add_ip_to_domains(tracert_results):
         ordered_ips = []
         for tracert_text in tracert_texts:
             ips = extract_ips_from_tracert(tracert_text)
-            for ip in ips[6:]:
+            for ip in ips[2:]:
                 if ip not in ordered_ips:
                     ordered_ips.append(ip)
         ips_by_domain[domain] = ordered_ips
