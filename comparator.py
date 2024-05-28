@@ -3,6 +3,7 @@ import subprocess
 import json
 import os
 import re
+import platform
 
 app = Flask(__name__)
 
@@ -84,7 +85,7 @@ def execute_nslookup():
     
     parameter = domain.group(1) if domain else ip
 
-    print(f"Parameter passed to nslookupchecker.bat: {parameter}")
+    print(f"Parameter passed to nslookupchecker: {parameter}")
 
     with open('domains.json', 'r') as file:
         existing_data = json.load(file)
@@ -93,7 +94,11 @@ def execute_nslookup():
         if entry['IP'] == parameter:
             return jsonify(entry)
 
-    command = f'nslookupchecker.bat {parameter}'
+    system_name = platform.system().lower()
+    if system_name == 'windows':
+        command = f'nslookupChecker.bat {parameter}'
+    else:
+        command = f'./nslookupChecker.sh {parameter}'
 
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
@@ -115,4 +120,4 @@ def execute_nslookup():
     return jsonify(result)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

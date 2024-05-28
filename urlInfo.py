@@ -2,6 +2,7 @@ import json
 import subprocess
 import datetime
 import os
+import platform
 
 def load_from_json(filename):
     with open(filename, 'r') as file:
@@ -14,14 +15,20 @@ def save_to_json(filename, data):
 def run_tracert(domain, results_file):
     timeout_count = 0
     max_consecutive_timeouts = 3
+    system_name = platform.system().lower()
+
+    if system_name == 'windows':
+        command = ["tracert", domain]
+    else:
+        command = ["traceroute", domain]
 
     with open(results_file, "a") as file:
         file.write(f"Tracert for {domain} on date {datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}\n")
-        process = subprocess.Popen(["tracert", domain], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=False)
 
         for line in iter(process.stdout.readline, ''):
             file.write(line)
-            if "Request timed out" in line:
+            if "Request timed out" in line or "* * *" in line:
                 timeout_count += 1
                 if timeout_count >= max_consecutive_timeouts:
                     file.write("More than 3 'Request timed out' lines, moving to next domain.\n")
@@ -44,7 +51,6 @@ def tracert_domains():
     if not os.path.exists(results_file) or os.path.getsize(results_file) == 0:
         start_processing = True
 
-
     domain_counter = {}
 
     for domain in order:
@@ -59,7 +65,6 @@ def tracert_domains():
             run_tracert(domain, results_file)
             data['last_url'] = {"domain": domain, "occurrence": domain_counter[domain]}
             save_to_json(json_file, data)
-
 
 if __name__ == "__main__":
     tracert_domains()

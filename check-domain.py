@@ -20,15 +20,14 @@ def setup_driver():
         driver = webdriver.Firefox()
     elif system_name in ["linux", "darwin"]:
         opts = Options()
-        opts.binary_location = '/usr/local/bin/firefox'
+        opts.binary_location = '/usr/bin/firefox'
         service = Service(executable_path=GeckoDriverManager().install())
         driver = webdriver.Firefox(service=service, options=opts)
     else:
         raise Exception("Unsupported operating system.")
     
-    driver.get("https://www.google.com") 
+    driver.get("https://www.google.com")
     return driver
-
 
 def save_to_json(filename, data):
     with open(filename, 'w') as file:
@@ -57,7 +56,6 @@ def load_from_json(filename):
             }
         else:
             return json.load(file)
-
 
 def checker():
     json_file = "domains.json"
@@ -115,4 +113,3 @@ if __name__ == "__main__":
             break  
         else:
             print("Type 'yes' or 'no'.")
-
