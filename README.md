@@ -34,15 +34,22 @@ My goal is to implement the application in such a way that it can be run as a co
 
    [Link to download XLaunch](https://sourceforge.net/projects/vcxsrv/)
 
-2. Download Docker Engine:
+   XLanuch is needed to open the browser from a container on the host.
+
+3. Download Docker Engine:
 
    [Windows](https://docs.docker.com/desktop/install/windows-install/) | [Linux](https://docs.docker.com/desktop/install/linux-install/)
 
-3. Create an image using Dockerfile
+4. Create an image using Dockerfile
     ```bash
     docker build -t {yourImageName} .
     ```
-4. Run the container
+5. Run the container
     ```bash
     docker run -it -p 5000:5000 -v C:\Users\Jakub\Desktop\nslookup\nslookup-checker:/app {yourImageName}
     ```
+# GUI
+GUI examples
+![image](https://github.com/binthon/nslookup-checker/assets/74725795/18f38499-a687-4f1a-8815-a27fa56479f4)
+![image](https://github.com/binthon/nslookup-checker/assets/74725795/4e462382-c697-4dc6-a3d6-56030f416f07)
+![image](https://github.com/binthon/nslookup-checker/assets/74725795/5df349e9-d8c1-45ca-bb44-4c82d1911ae6)
