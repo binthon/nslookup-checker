@@ -40,4 +40,4 @@ EXPOSE 5000
 ENV NAME World
 
 # Uruchom Xvfb i aplikację
-CMD python check-domain.py
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x24 & export DISPLAY=:99 && python check-domain.py"]
