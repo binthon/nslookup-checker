@@ -50,4 +50,6 @@ My goal is to implement the application in such a way that it can be run as a co
     ```
 
 GUI examples
-
+![image](https://github.com/binthon/nslookup-checker/assets/74725795/18f38499-a687-4f1a-8815-a27fa56479f4)
+![image](https://github.com/binthon/nslookup-checker/assets/74725795/4e462382-c697-4dc6-a3d6-56030f416f07)
+![image](https://github.com/binthon/nslookup-checker/assets/74725795/5df349e9-d8c1-45ca-bb44-4c82d1911ae6)
