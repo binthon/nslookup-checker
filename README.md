@@ -23,8 +23,18 @@ To interact with the user, I used the Flask tool, which is responsible for creat
   localhost:5000
 ```
 
-<h1> Docker
- docker run -it --network host -v C:\Users\Jakub\Desktop\nslookup\nslookup-checker:/app -e DISPLAY=host.docker.internal:0.0 nslookup
-setx DISPLAY 127.0.0.1:0.0
-sudo apt-get install x11-xserver-utils
-2. docker run -it --network host -e DISPLAY=host.docker.internal:0.0 -v C:\Users\Jakub\Desktop\nslookup\nslookup-checker:/app nslookup
+# Docker
+My goal is to implement the application in such a way that it can be run as a container
+1. Download XLaunch app to can open multiple window and set "Disable access controlę option during installation. 
+Link to download XLanuch: https://sourceforge.net/projects/vcxsrv/
+2. Download Docker Engine
+  Windows: https://docs.docker.com/desktop/install/windows-install/
+  Linux: https://docs.docker.com/desktop/install/linux-install/
+3. Create images using Dockerfile
+```bash
+  docker build -t {yourImageName} .
+```
+4. Run container
+```bash
+  docker run -it --network host -e DISPLAY=host.docker.internal:0.0 -v your\path\to\projects:/app nslookup
+```
