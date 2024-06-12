@@ -44,5 +44,5 @@ My goal is to implement the application in such a way that it can be run as a co
     ```
 4. Run the container
     ```bash
-    docker run -it --network host -e DISPLAY=host.docker.internal:0.0 -v your\path\to\projects:/app nslookup
+    docker run -it -p 5000:5000 -v C:\Users\Jakub\Desktop\nslookup\nslookup-checker:/app {yourImageName}
     ```
