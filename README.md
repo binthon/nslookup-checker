@@ -1,4 +1,4 @@
-<h1>purposes of the application</h1>
+<h1>Purposes of the Application</h1>
 Apliaction is designed to collect the internet domain that a user walks through and then collects information about that domain. The traceroute and nslookup commands are executed, and the data from these commands is visualised in the web application.
 
 
