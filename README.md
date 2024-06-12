@@ -26,9 +26,11 @@ To interact with the user, I used the Flask tool, which is responsible for creat
 # Docker
 My goal is to implement the application in such a way that it can be run as a container
 1. Download XLaunch app to can open multiple window and set "Disable access controlę option during installation. 
+
 Link to download XLanuch: https://sourceforge.net/projects/vcxsrv/
 2. Download Docker Engine
   Windows: https://docs.docker.com/desktop/install/windows-install/
+  
   Linux: https://docs.docker.com/desktop/install/linux-install/
 3. Create images using Dockerfile
 ```bash
