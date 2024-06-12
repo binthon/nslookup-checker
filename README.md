@@ -1,11 +1,11 @@
-<h1>Purposes of the Application</h1>
+# Purposes of the Application 
 Apliaction is designed to collect the internet domain that a user walks through and then collects information about that domain. The traceroute and nslookup commands are executed, and the data from these commands is visualised in the web application.
-<h1>Technologies used</h1>
-<h4>Backend</h4>
+# Technologies used
+# Backend 
 The backend of the application is written using Python along with the Selenium library.  I also created bat and bash scripts to operate on the traceroute/tracert and nslookup commands The domain data is stored in a json file.
-<h4>Frontend</h4>
+# Frontend
 To interact with the user, I used the Flask tool, which is responsible for creating the web application and retrieving data from a json file.
-<h1>How Use</h1>
+# How Use
 1. Download code form github
 ```bash
   git@github.com:binthon/nslookup-checker.git
