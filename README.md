@@ -28,7 +28,7 @@ To interact with the user, I used the Flask tool, which is responsible for creat
     ```
 
 # Docker
-My goal is to implement the application in such a way that it can be run as a container.
+My goal is to implement the application in such a way that it can be run as a container. This implementation is not ready yet.
 
 1. Download XLaunch app to open multiple windows and set "Disable access control" option during installation.
 
